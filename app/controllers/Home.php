@@ -8,7 +8,9 @@ class Home extends Controller{
 
     public function indexAction() {                   //queryParam will be passed into the method 
         $db = DB::getInstance();
-        $contact =$db->delete('contacts',6);
+        $contact =$db->query('SELECT * FROM contacts ORDER BY fname');
+        $contacts =$contact->results();
+        dnd($contacts);
         $this->view->render('home/index');
     }
 }
