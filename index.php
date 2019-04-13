@@ -21,7 +21,7 @@
     spl_autoload_register('autoload');
     session_start();
     
-    // $url = isset($_SERVER['PATH_INFO']) ? explode('/', ltrim($_SERVER['PATH_INFO'],'/')) : [];
+    $url = isset($_SERVER['PATH_INFO']) ? explode('/', ltrim($_SERVER['PATH_INFO'],'/')) : [];
     // $db = DB::getInstance();
     
     // dnd($db);
