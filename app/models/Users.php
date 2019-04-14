@@ -9,7 +9,7 @@ class Users extends Model {
     public function __construct($user='') {
         $table = 'users';
         parent::__construct($table);
-        $this->sessionName = CURRENT_USER_SESSION_NAME;
+        $this->_sessionName = CURRENT_USER_SESSION_NAME;
         $this->_cookieName = REMEMBER_ME_COOKIE_NAME;
         $this->_softDelete = true;
 
@@ -32,7 +32,7 @@ class Users extends Model {
     }
 
     public static function currentLoggedInUser() {
-        if(!isset(self::currentLoggedInUser) && Sessoin::exists(CURRENT_USER_SESSION_NAME)) {
+        if(!isset(self::$currentLoggedInUser) && Sessoin::exists(CURRENT_USER_SESSION_NAME)) {
                 $u = new Users((int)Session::get(CURRENT_USER_SESSION_NAME));
                 self::$currentLoggedInUser = $u;
         } 
@@ -44,9 +44,9 @@ class Users extends Model {
         if($rememberMe) {
             $hash = md5(unique() + rand(0,100));
             $user_agent = Session::uagent_no_versions();
-            Cookie::set($this->_cookieName, $hash,REMEMBER_COOKIE_EXPIRY);
+            Cookie::set($this->_cookieName, $hash, REMEMBER_COOKIE_EXPIRY);
             $fields = ['session' => $hash, 'user_agent' =>$user_agent, 'user_id' =>$this->id];
-            $this->_db->query("DELETE FROM user_sessions WHERE user_id = ? AND user_agent = ?",[$this->id, $user_agent]);
+            $this->_db->query("DELETE FROM user_sessions WHERE user_id = ? AND user_agent = ?",[$this->id, $user_agent]);      //delete old cookies saved in the DB
             $this->_db->insert('user_sessions', $fields);
         }
     }

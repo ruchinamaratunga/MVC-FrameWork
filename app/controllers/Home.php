@@ -7,10 +7,17 @@ class Home extends Controller{
     }
 
     public function indexAction() {                   //queryParam will be passed into the method 
-        $db = DB::getInstance();
-        $contact =$db->query('SELECT * FROM contacts ORDER BY fname');
-        $contacts =$contact->results();
-        dnd($contacts);
+        // $db = DB::getInstance();
+        // $contact =$db->find('contacts', [
+        //     'conditions' => "lname = ?",
+        //     'bind' => ['Amaratunga'],
+        //     'order' => "lname",
+        //     'limit' => 5
+        // ]);
+        // dnd($contact);
+        dnd($_SESSION);
         $this->view->render('home/index');
     }
+
+
 }

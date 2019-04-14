@@ -9,6 +9,7 @@
  * 
  * In the view folder, every page has a seperate folder with different files for different views
  * 
+ * in any file in view folder $this is referred to the view class
  */
 
 class View {
@@ -17,6 +18,7 @@ class View {
               $_siteTitle  = SITE_TITLE,
               $_outputBuffer,
               $_layout = DEFAULT_LAYOUT;
+    public $diplayErrors;
 
     public function __construct() {
         // $this->_layout = DEFAULT_LAYOUT;

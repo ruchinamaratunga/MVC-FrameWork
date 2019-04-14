@@ -9,7 +9,7 @@ class Register extends Controller {
     }
 
     public function loginAction() {
-        echo password_hash('password', PASSWORD_DEFAULT);
+        // echo password_hash('password', PASSWORD_DEFAULT);
         $validation = new Validate();
         if($_POST) {
             //from valisation
@@ -25,7 +25,7 @@ class Register extends Controller {
                 ]
             ]);
             if($validation->passed()) {
-                $user = $this->UserModel->findByUsername($_POST['username']);
+                $user = $this->UsersModel->findByUsername($_POST['username']);
                 if($user && password_verify(Input::get('password'), $user->password)) {
                     $remember = (isset($_POST['remember_me']) && Input::get('remember_me')) ? true :false;
                     $user->login($remember);

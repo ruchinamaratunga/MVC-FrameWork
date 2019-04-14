@@ -1,5 +1,9 @@
-<?php
+ <?php
 
+/**
+ * $_softdelete attribute is to unable user by a boolean value 
+ * without deleting it from the database
+ */
 class Model {
     protected $_db,
               $_table,
@@ -15,8 +19,11 @@ class Model {
         $this->_modelName = str_replace(' ','', ucwords(str_replace('_',' ',$this->_table)));
     }
 
+    /**
+     * populate each column with null 
+     */
     protected function _setTableColumns() {
-        $columns = $this-> get_columns();
+        $columns = $this->get_columns();
         foreach($columns as $column) {
             $columnName = $column->Field;
             $this->_columnNames[] = $column->Field;
@@ -28,6 +35,12 @@ class Model {
         return $this->_db->get_columns($this->_table);
     }
 
+    /**
+     * for each row in a table in the DB find() create a relavant object
+     * 
+     * eg: from user table find() return a list of objects of
+     *     Users for each entry of users in the table
+     */
     public function find($params = []) {
         $results = [];
         $resultsQuery = $this->_db->find($this->_table,$params);
@@ -42,7 +55,9 @@ class Model {
     public function findFirst($params = []) {
         $resultQuery = $this->_db->find($this->_table,$params);
         $result = new $this->_modelName($this->_table);
-        $result->populateObjData($resultQuery);
+        if($resultQuery) {
+            $result->populateObjData($resultQuery);
+        }
         return $result;        
     }
 

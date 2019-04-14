@@ -37,6 +37,17 @@
 
     $fieldString will get a string like (" fname =?, lname =?, address =?")
 
+    ***********find($table,$params=array()) **************************************
+
+    when we need to find a particular details 
+
+    $contact =DB::getInstance()->find('contacts', [
+            'conditions' => ['lname => ?', 'fname => ?' ],
+            'bind' => ['Subsinghe'],
+            'order' => "lname,fname",
+            'limit' => 5
+        ]);
+
     */ 
 
 
@@ -118,7 +129,7 @@ class DB {
 
     protected function _read($table, $params= array()) {
         $conditionString = '';
-        $bind = '';
+        $bind = []; 
         $order = '';  
         $limit = '';
 
@@ -134,10 +145,9 @@ class DB {
                 $conditionString = $params['conditions'];
             }
             if($conditionString != '') {
-                $conditionString = 'Where ' . $conditionString;
+                $conditionString = ' WHERE ' . $conditionString;
             }
         }
-
         //bind
         if(array_key_exists('bind', $params)) {
             $bind = $params['bind'];
@@ -146,32 +156,17 @@ class DB {
         if(array_key_exists('order', $params)) {
             $limit = ' ORDER BY ' . $params['order'];
         }
-
         //limit
         if(array_key_exists('limit', $params)) {
             $limit = ' LIMIT ' . $params['limit'];
         }
         $sql = "SELECT * FROM {$table}{$conditionString}{$order}{$limit}";
         if($this->query($sql,$bind)) {
-            if(!count($this->_results)) return false;
+            if(!$this->count()) return false;
             return true;
         }
         return false;
 
-    }
-
-    public function find($table, $params = array()) {
-        if($this->_read($table,$params)) {
-            return $this->results();
-        }
-        return false;
-    }
-
-    public function findFirst($table, $params = array()) {
-        if($this->_read($table,$params)) {
-            return $this->first();
-        }
-        return false; 
     }
 
     public function update($table, $id, $fields = array()) {
@@ -189,6 +184,20 @@ class DB {
             return true;
         }
         return false;
+    }
+
+    public function find($table, $params = array()) {
+        if($this->_read($table,$params)) {
+            return $this->results();
+        }
+        return false;
+    }
+
+    public function findFirst($table, $params = array()) {
+        if($this->_read($table,$params)) {
+            return $this->first();
+        }
+        return false; 
     }
 
     public function delete($table, $id) {
@@ -216,7 +225,7 @@ class DB {
     }
 
     public function first() {
-        return (!empty($this->_result)) ? $this->error : [];
+        return (!empty($this->_results)) ? $this->_results[0] : [];
     }
 
     public function get_columns($table) {

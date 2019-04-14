@@ -16,4 +16,4 @@ class Controller extends Application {
             $this->{$model.'Model'} = new $model(strtolower($model));
         }
     }
-} 
+}  

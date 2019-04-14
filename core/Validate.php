@@ -1,6 +1,20 @@
 <?php
 
-class Validation {
+/**
+ * check($_POST,[
+ *   'username' =>[
+ *      'display' => "Username",
+ *      'required' => true
+ *    ],
+ * 
+ * items is the input array
+ * username is a item
+ * display is a rule
+ * Username is a rule_value
+ *  
+ */
+
+class Validate {
     private $_passed = false,
             $_errors=[],
             $_db = null;
@@ -9,16 +23,15 @@ class Validation {
         $this->_db = DB::getInstance();
     }
 
-    public function check($source, $item = array()) {
-        $this->_errors = [];
+    public function check($source, $items = array()) {
+        $this->_errors = [];                                                                     //clear out the errors of the last validation
         foreach($items as $item => $rules) {
-            $item = Input::sanitized($item);
+            $item = Input::sanitize($item);
             $display = $rules['display'];
             foreach($rules as $rule => $rule_value) {
                 $value = Input::sanitize(trim($source[$item]));
-
                 if($rule === 'required' && empty($vlaue)) {
-                    $this->addError(["{$display} is required". $item]);
+                    $this->addError(["{$display} is required", $item]);
                 } elseif (!empty($value)) {
                     switch ($rule) {
                         case 'min' :
@@ -56,6 +69,11 @@ class Validation {
                                 $this->addError(["{$display} already exists. Please choose another {$display}.", $item]);
                             }
                             break;
+
+                        case 'is_numeric':
+                            if(!is_numeric($value)) {
+                                $this->addError(["{$display} has to be a number. Please use a numberic value", $item]);
+                            }
                         
                         case 'valid_email':
                             if(!filter_var($value, FILTER_VALIDATE_EMAIL)) {
@@ -67,6 +85,11 @@ class Validation {
                 }
             }
         }
+
+        if(empty($this->errors)) {
+            $this->_passed = true;
+        }
+        return $this;
     }
 
     public function addError($error) {
@@ -83,14 +106,18 @@ class Validation {
     }
 
     public function passed() {
-        return $this->_passed;
+        return $this->_passed; 
     }
 
-    public function display_errors() {
-        $html = '<ul class = "bg-danger">';
+    public function displayErrors() {
+        $html = '<ul class="bg-danger">';
         foreach($this->_errors as $error) {
-            $html .= '<li class= "text-danger">'.$error[0].'</li>';
-            $html .= '<script>jQuery("document").ready(funciton(){jQuery("#'.$error[1].'").parent().closest("div").addClass("has-erro");});</script>' ;
+            if(is_array($error)) {
+                $html .= '<li class= "text-danger">'.$error[0].'</li>';
+                $html .= '<script>jQuery("document").ready(function(){jQuery("#'.$error[1].'").parent().closest("div").addClass("has-error");});</script>' ;
+            } else {
+                $html .= '<li class="text-danger">'.$error.'</li>';
+            }
         }
         $html .= '</ul>';
         return $html;

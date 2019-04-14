@@ -6,7 +6,7 @@
     <title><?= $this->siteTitle(); ?></title>
     <link rel="stylesheet" href="<?=PROOT?>css/bootstrap.min.css" media="screen" title = "no title" charset = "utf-8">
     <link rel="stylesheet" href="<?=PROOT?>css/custom.css" media="screen" title = "no title" charset = "utf-8">
-
+    <?= $this->content('head'); ?>
   </head>
   <body>
     <?= $this->content('body'); ?>
