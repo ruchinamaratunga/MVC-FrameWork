@@ -110,7 +110,7 @@ class Validate {
     }
 
     public function displayErrors() {
-        $html = '<ul class="bg-danger">';
+        $html = '<ul class = "bg-danger">';
         foreach($this->_errors as $error) {
             if(is_array($error)) {
                 $html .= '<li class= "text-danger">'.$error[0].'</li>';

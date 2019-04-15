@@ -59,7 +59,7 @@ class View {
      */
     public function end() {
         if($this->_outputBuffer == 'head') {
-            $this->head = ob_get_clean();
+            $this->_head = ob_get_clean();
         } elseif($this->_outputBuffer == 'body') {
             $this->_body = ob_get_clean();
         } else {

@@ -12,6 +12,11 @@ class Register extends Controller {
         // echo password_hash('password', PASSWORD_DEFAULT);
         $validation = new Validate();
         if($_POST) {
+            // $validation = true;
+            // if($validation) {
+            //     $user = $this->UsersModel->findByUsername($_POST['username']);
+            //     dnd($user);
+            // }
             //from valisation
             $validation->check($_POST,[
                 'username' =>[
@@ -25,8 +30,12 @@ class Register extends Controller {
                 ]
             ]);
             if($validation->passed()) {
+                // dnd($_POST['username']);                
                 $user = $this->UsersModel->findByUsername($_POST['username']);
+                // dnd($user);
+                // dnd(password_verify(Input::get('password'), $user->password));
                 if($user && password_verify(Input::get('password'), $user->password)) {
+                    echo "hi";
                     $remember = (isset($_POST['remember_me']) && Input::get('remember_me')) ? true :false;
                     $user->login($remember);
                     Router::redirect('');
@@ -39,10 +48,10 @@ class Register extends Controller {
         $this->view->render('register/login');
     }
 
-    public function logoutAction() {
-        if(currentUser()) {
-            currentUser()->logout();
-        }
-        Router::redirect('register/login');
-    }
+    // public function logoutAction() {
+    //     if(currentUser()) {
+    //         currentUser()->logout();
+    //     }
+    //     Router::redirect('register/login');
+    // }
 }

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ *   *********load_model($model)**************
+ * 
+ * if $model = "users";
+ * this function will instetiate Users($table) object
+ * and pass the $table as users. 
+ */
 class Controller extends Application {
     protected $_controller, $_action;
     public $view;

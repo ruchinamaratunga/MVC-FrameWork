@@ -8,14 +8,14 @@ class Home extends Controller{
 
     public function indexAction() {                   //queryParam will be passed into the method 
         // $db = DB::getInstance();
-        // $contact =$db->find('contacts', [
+        // $contact =$db->findFirst('contacts', [
         //     'conditions' => "lname = ?",
-        //     'bind' => ['Amaratunga'],
+        //     'bind' => ['Parham'],
         //     'order' => "lname",
         //     'limit' => 5
         // ]);
         // dnd($contact);
-        dnd($_SESSION);
+        // dnd($_SESSION);
         $this->view->render('home/index');
     }
 

@@ -51,7 +51,7 @@ class Router {
             echo '<noscript>';
             echo '<meta http-equiv="refresh" content="0; url='.location.'" />';
             echo '</noscript>';
-            exit;
+            exit();
 
         }
     }

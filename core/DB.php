@@ -43,7 +43,7 @@
 
     $contact =DB::getInstance()->find('contacts', [
             'conditions' => ['lname => ?', 'fname => ?' ],
-            'bind' => ['Subsinghe'],
+            'bind' => ['Subasinghe'],
             'order' => "lname,fname",
             'limit' => 5
         ]);
@@ -88,7 +88,7 @@ class DB {
             }
 
             if($this->_query->execute()){                                   // checking whether query executed successfully
-                $this-> _results = $this->_query->fetchAll(PDO::FETCH_OBJ); //fetching data as object
+                $this->_results = $this->_query->fetchAll(PDO::FETCH_OBJ); //fetching data as object
                 $this->_count = $this->_query->rowCount();
                 $this->_lastInsertID = $this->_pdo->lastInsertId();                                                      
             }
@@ -132,7 +132,6 @@ class DB {
         $bind = []; 
         $order = '';  
         $limit = '';
-
         //conditions
         if(isset($params['conditions'])) {
             if(is_array($params['conditions'])) {
@@ -161,6 +160,8 @@ class DB {
             $limit = ' LIMIT ' . $params['limit'];
         }
         $sql = "SELECT * FROM {$table}{$conditionString}{$order}{$limit}";
+        // dnd($bind);
+        // dnd($sql);
         if($this->query($sql,$bind)) {
             if(!$this->count()) return false;
             return true;
@@ -168,6 +169,21 @@ class DB {
         return false;
 
     }
+    
+    public function find($table, $params = array()) {
+        if($this->_read($table,$params)) {
+            return $this->results();
+        }
+        return false;
+    }
+
+    public function findFirst($table, $params = array()) {
+        if($this->_read($table,$params)) {
+            return $this->first();
+        }
+        return false; 
+    }
+
 
     public function update($table, $id, $fields = array()) {
         $fieldString = '';
@@ -184,20 +200,6 @@ class DB {
             return true;
         }
         return false;
-    }
-
-    public function find($table, $params = array()) {
-        if($this->_read($table,$params)) {
-            return $this->results();
-        }
-        return false;
-    }
-
-    public function findFirst($table, $params = array()) {
-        if($this->_read($table,$params)) {
-            return $this->first();
-        }
-        return false; 
     }
 
     public function delete($table, $id) {

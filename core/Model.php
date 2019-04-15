@@ -53,7 +53,9 @@ class Model {
     }
 
     public function findFirst($params = []) {
-        $resultQuery = $this->_db->find($this->_table,$params);
+        $resultQuery = $this->_db->findFirst($this->_table,$params);
+        // echo("hii");
+        // dnd($resultQuery);
         $result = new $this->_modelName($this->_table);
         if($resultQuery) {
             $result->populateObjData($resultQuery);
