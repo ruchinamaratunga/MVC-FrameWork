@@ -5,7 +5,7 @@
 
 <div class="container">
     <form class="form-signin" action = "<?=PROOT?>register/login" method = "post">
-    <div><?= $this->displayErrors ?></div>
+    <div class="bg-danger"><?= $this->displayErrors ?></div>
     <h2 class="form-signin-heading text-center">Log in</h2>
     <div class="form-group">
         <label for="username">User Name</label>

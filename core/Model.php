@@ -97,7 +97,7 @@ class Model {
         if ($this->_softDelete) {
             return $this->update($id, ['deleted' => 1]);
         }
-        return $this->_db->delte($this->_table, $id);
+        return $this->_db->delete($this->_table, $id);
     }
 
     public function query($sql, $bind = []) {

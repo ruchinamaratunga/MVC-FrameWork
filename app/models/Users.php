@@ -15,17 +15,16 @@ class Users extends Model {
 
         if($user != '') {
             if(is_int($user)) {
-                $u = $this->db->findFirst('users',['conditions'=>'id = ?', 'bind'=>[$user]]);
+                $u = $this->_db->findFirst('users',['conditions'=>'id = ?', 'bind'=>[$user]]);
             } else {
                 $u = $this->_db->findFirst('users',['conditions'=>'username = ?', 'bind'=>[$user]]);
             }
             if($u) {
-                dnd($u);
                 foreach($u as $key =>$val) {
                     $this->$key = $val;
                 }
             }
-            echo $this->username;
+            // echo $this->username;
         }
     }
 
@@ -33,19 +32,22 @@ class Users extends Model {
         return $this->findFirst(['condition' => "username = ?" , 'bind' => [$username]]);
     }
 
-    // public static function currentLoggedInUser() {
-    //     if(!isset(self::$currentLoggedInUser) && Sessoin::exists(CURRENT_USER_SESSION_NAME)) {
-    //             $u = new Users((int)Session::get(CURRENT_USER_SESSION_NAME));
-    //             self::$currentLoggedInUser = $u;
-    //     } 
-    //     return self::$currentLoggedInUser;
-    // }
+    /**
+     * static method is used becoz we want to log out from all the devices we use
+     */
+    public static function currentLoggedInUser() {
+        if(!isset(self::$currentLoggedInUser) && Session::exists(CURRENT_USER_SESSION_NAME)) {
+                $u = new Users((int)Session::get(CURRENT_USER_SESSION_NAME));
+                self::$currentLoggedInUser = $u;
+        } 
+        return self::$currentLoggedInUser;
+    }
 
     public function login($rememberMe = false) {
         Session::set($this->_sessionName,$this->id);
         if($rememberMe) {
-            $hash = md5(unique() + rand(0,100));
-            $user_agent = Session::uagent_no_versions();
+            $hash = md5(uniqid() + rand(0,100));
+            $user_agent = Session::uagent_no_version();
             Cookie::set($this->_cookieName, $hash, REMEMBER_ME_COOKIE_EXPIRY);
             $fields = ['session' => $hash, 'user_agent' =>$user_agent, 'user_id' =>$this->id];
             $this->_db->query("DELETE FROM user_sessions WHERE user_id = ? AND user_agent = ?",[$this->id, $user_agent]);      //delete old cookies saved in the DB
@@ -54,26 +56,32 @@ class Users extends Model {
     }
 
     public static function loginUserFromCookie() {
-        $user_session_model = new UserSessions();
-        $user_session = $user_session_model->findFirst([
-            'conditions' => "user_agent = ? AND session = ?",
-            'bind' => [Session::uagent_no_version(), Cookie::get(REMEMBER_ME_COOKIE_NAME)]
-        ]);
-        if($user_session->user_id != '') {
-            $user = new self((int)$user_session->user_id);
+        $userSession = UserSessions::getFromCookie();
+        if($userSession->user_id != '') {
+            $user = new self((int)$userSession->user_id);
         }
-        $user->login();
-        return self::$currentLoggedInUser;
+        if($user) {
+            $user->login();
+        }
+        return $user;
     }
 
-    // public function loggout() {
-    //     $user_agent = Session::uagent_no_versions();
-    //     $this->_db->query("DELETE FROM user_sessions WHERE user_id = ? AND user_agent = ?",[$this->id,$user_agent]);
-    //     Session::delete(CURRENT_USER_SESSION_NAME);
-    //     if(Cookie::exists(REMEMBER_ME_COOKIE_NAME)) {
-    //         Cookie::delete(REMEMBER_ME_COOKIE_NAME);
-    //     }
-    //     self::$currentLoggedInUser = null;
-    //     return ture;
-    // }
+    public function logout() {
+        $userSession = UserSessions::getFromCookie();
+        if($userSession) $userSession->delete();
+        Session::delete(CURRENT_USER_SESSION_NAME);
+        if(Cookie::exists(REMEMBER_ME_COOKIE_NAME)) {
+            Cookie::delete(REMEMBER_ME_COOKIE_NAME);
+        }
+        self::$currentLoggedInUser = null;
+        return true;
+    }
+
+    public function registerNewUser($params) {
+        $this->assign($params);
+        $this->deleted = 0;
+        $this->password = password_hash($this->password, PASSWORD_DEFAULT);
+        $this->save();
+    }
+
 }

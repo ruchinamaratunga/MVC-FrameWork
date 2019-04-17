@@ -30,7 +30,8 @@ class Validate {
             $display = $rules['display'];
             foreach($rules as $rule => $rule_value) {
                 $value = Input::sanitize(trim($source[$item]));
-                if($rule === 'required' && empty($vlaue)) {
+                if($rule === 'required' && empty($value)) {
+                    echo($value);
                     $this->addError(["{$display} is required", $item]);
                 } elseif (!empty($value)) {
                     switch ($rule) {
